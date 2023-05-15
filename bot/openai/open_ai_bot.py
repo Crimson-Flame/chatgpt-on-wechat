@@ -24,9 +24,9 @@ class OpenAIBot(Bot, OpenAIImage):
         openai.api_key = conf().get("open_ai_api_key")
         if conf().get("open_ai_api_base"):
             openai.api_base = conf().get("open_ai_api_base")
-        proxy = conf().get("proxy")
-        if proxy:
-            openai.proxy = proxy
+#         proxy = conf().get("proxy")
+#         if proxy:
+#             openai.proxy = proxy
 
         self.sessions = SessionManager(OpenAISession, model=conf().get("model") or "text-davinci-003")
         self.args = {
@@ -103,13 +103,13 @@ class OpenAIBot(Bot, OpenAIImage):
                     time.sleep(20)
             elif isinstance(e, openai.error.Timeout):
                 logger.warn("[OPEN_AI] Timeout: {}".format(e))
-                result["content"] = "我没有收到你的消息"
+                result["content"] = "Bad network when communicating with oepnai, try again later"
                 if need_retry:
                     time.sleep(5)
             elif isinstance(e, openai.error.APIConnectionError):
                 logger.warn("[OPEN_AI] APIConnectionError: {}".format(e))
                 need_retry = False
-                result["content"] = "我连接不到你的网络"
+                result["content"] = "Issue connecting to openai, try again later."
             else:
                 logger.warn("[OPEN_AI] Exception: {}".format(e))
                 need_retry = False
